@@ -110,8 +110,8 @@ export default function Home() {
         `Paste you fb pageID/insights?metric=['page_impressions', 'page_engaged_users','page_fans']&period=day&access_token=Paste youe access token`,
         "GET",
 
-        // page ID
-        // 110092194055294_509118877989115/insights?metric=post_engaged_users
+        // post ID
+        // paste yuor post ID/insights?metric=post_engaged_users
 
         function (response) {
           if (response && !response.error) {
