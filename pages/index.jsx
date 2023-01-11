@@ -1,7 +1,6 @@
 import Head from "next/head";
 
 import { useEffect, ChangeEvent, useRef, useState } from "react";
-import FileUpload from "./fileUplaod";
 
 import styles from "../styles/Home.module.css";
 
@@ -13,31 +12,12 @@ export default function Home() {
   const [pageAccessToken, setPageAccessToken] = useState();
   const [grantedScopes, setGrantedScopes] = useState();
   const [postText, setPostText] = useState();
-  console.log("pageId", pageId);
-  console.log("pageAccessToken", pageAccessToken);
-
-  // uplaod image
-
-  // const [image, setImage] = useState(null);
-  // const [createObjectURL, setCreateObjectURL] = useState(null);
-
-  // const uploadToClient = (event) => {
-  //   if (event.target.files && event.target.files[0]) {
-  //     const i = event.target.files[0];
-
-  //     setImage(i);
-  //     setCreateObjectURL(URL.createObjectURL(i));
-  //   }
-  // };
-
-  // uplaod image
+  const [data, setData] = useState([]);
 
   useEffect(() => {
-    const app_id = "564976968379492";
-    console.log("app_id", app_id);
     window.fbAsyncInit = function () {
       window.FB.init({
-        appId: app_id,
+        appId: "711013470401273",
         autoLogAppEvents: true,
         xfbml: true,
         version: "v15.0",
@@ -82,8 +62,9 @@ export default function Home() {
         function (response) {
           if (response.authResponse) {
             // response all data
-            console.log(response);
-            // response all data
+            // console.log(response);
+
+            // console.log(response.authResponse.accessToken);
 
             setAccessToken(response.authResponse.accessToken);
             setGrantedScopes(response.authResponse.grantedScopes);
@@ -93,6 +74,7 @@ export default function Home() {
               function (response) {
                 if (response && !response.error) {
                   setPageAccessToken(response?.data?.[0].access_token);
+                  // console.log(response);
 
                   setPageId(response?.data?.[0].id);
                 }
@@ -110,7 +92,8 @@ export default function Home() {
         },
 
         {
-          scope: "public_profile,pages_read_engagement,pages_manage_posts",
+          scope:
+            "user_posts,pages_show_list,pages_read_user_content,public_profile,pages_read_engagement,pages_manage_posts,pages_manage_engagement",
 
           return_scopes: true,
         }
@@ -120,55 +103,97 @@ export default function Home() {
     }
   };
 
-  const post = () => {
-    FB.api(
-      // post image
-      // `/${pageId}/photos?url=https://lh3.googleusercontent.com/5Ecse55Ysa3Ju5f4Idr1qt_LMn53mZd5j1Xk1NYGKp1_QQG8IutJX-7RoHPMW-3JPv3qxp_7Qd_ZPuNVm2O5eZQIXQ=w640-h400-e365-rj-sc0x00ffffff&access_token=${pageAccessToken}`,
-      // post text
-      // `/${pageId}/feed?message=${postText}&access_token=${pageAccessToken}`,
-      // get likes
-      // `/${pageId}/feed?fields=comments.limit(1).summary(true)&likes.limit(1).summary(true)&access_token=${pageAccessToken}`,
+  const directDataGet = () => {
+    try {
+      FB.api(
+        // page data by day
+        `110092194055294/insights?metric=['page_impressions', 'page_engaged_users','page_fans']&period=day&access_token=EAAKGqblVcvkBAAOZBKu4qtLDXJVZCgCP2kOE4HJmbSIYZBMs2BlSY2MihWDsmJ6IferAYm81FiljYZCzj04iZCmKnJJfoxBq55OlASfIAq958fEIYgAOsKARNtQZCsro84UBPSPhDTo7xTsEwFe2AtQdIVEF3fuufqthuz0Aw2gMSaa6w5Ns7Jjh7OBEdTb3ZC99YztBbFkkYTcUSZA2YEbv`,
+        "GET",
 
-      `/${pageId}/feed?fields=likes.limit(1).summary(true)&access_token=${pageAccessToken}`,
-      "GET",
+        // page ID
+        // 110092194055294_509118877989115/insights?metric=post_engaged_users
 
-      // "POST",
-      function (response) {
-        console.log(response.error?.message);
-        if (response && !response.error) {
-          console.log(response.data[0].likes.summary);
+        function (response) {
+          if (response && !response.error) {
+            console.log(response);
+          }
         }
-      }
-    );
+      );
+    } catch (err) {
+      console.log(err);
+    }
   };
+
+  const post = () => {
+    console.log("pageId", pageId);
+    console.log("pageAccessToken", pageAccessToken);
+    try {
+      FB.api(
+        //   // post image
+        //   // `/${pageId}/photos?url=https://lh3.googleusercontent.com/5Ecse55Ysa3Ju5f4Idr1qt_LMn53mZd5j1Xk1NYGKp1_QQG8IutJX-7RoHPMW-3JPv3qxp_7Qd_ZPuNVm2O5eZQIXQ=w640-h400-e365-rj-sc0x00ffffff&access_token=${pageAccessToken}`,
+        //   // post text
+        //   // `/${pageId}/feed?message=${postText}&access_token=${pageAccessToken}`,
+        //   // get likes
+        //   // `/${pageId}/feed?fields=comments.limit(1).summary(true)&likes.limit(1).summary(true)&access_token=${pageAccessToken}`,
+
+        //   // `/${pageId}/feed?fields=likes.limit(10).summary(true)&access_token=${pageAccessToken}`,
+
+        `/${pageId}/feed?fields=comments.limit(200)&access_token=${pageAccessToken}`,
+        // `/${pageId}?fields=posts{comments.limit(10)}&access_token=${pageAccessToken}`,
+
+        "GET",
+
+        //   // "POST",
+        function (response) {
+          // console.log(response.error?.message);
+          if (response && !response.error) {
+            // console.log("LIKES", response.data[0].likes.summary);
+            // console.log(response);
+            // setData(response.data[0].comments.data[0].message);
+            // console.log(response.data[0].comments.data[1]);
+            setData(response.data);
+            // for (let index = 0; index <= response.data.length; index++) {
+            // const element = array[index];
+            // console.log("data");
+            // }
+          }
+        }
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  // console.log(data);
 
   return (
     <div className={styles.container}>
-      <Head>
+      {/* <Head>
         <title>Create Next App</title>
         <meta name="description" content="Generated by create next app" />
         <link rel="icon" href="/favicon.ico" />
-      </Head>
+      </Head> */}
+
+      <button onClick={directDataGet}>Direct Get</button>
 
       <main className={styles.main}>
         {!uiLogin && (
           <>
-            <h1 className={styles.title}>
+            {/* <h1 className={styles.title}>
               {user.name}
               <br />
               {user.id}
             </h1>
             <p>{grantedScopes}</p>
-            <br />
-            <br />
-            <br />
-            <textarea
+            <br /> */}
+            {/* <br />
+            <br /> */}
+            {/* <textarea
               style={{ width: "500px", fontSize: "18px", padding: "10px" }}
               value={postText}
               onChange={(e) => setPostText(e.target.value)}
               placeholder="Message..."
               rows="8"
-            />
+            /> */}
 
             {/* <div>
               <img src={createObjectURL} />
@@ -182,6 +207,22 @@ export default function Home() {
             >
               post
             </button>
+            {data.map((item, index) => {
+              console.log("item", item.comments.data[1].from.name);
+              return (
+                <>
+                  Button {[index]}&nbsp;&nbsp;&nbsp;
+                  {item.comments.data.map((i) => {
+                    var dat;
+                    if (i.from?.name) {
+                      dat = i.from.name;
+                    }
+                    return <>{dat}&nbsp;&nbsp;&nbsp;</>;
+                  })}
+                  <br />
+                </>
+              );
+            })}
           </>
         )}
 
