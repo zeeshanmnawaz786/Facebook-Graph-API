@@ -107,7 +107,7 @@ export default function Home() {
     try {
       FB.api(
         // page data by day
-        `110092194055294/insights?metric=['page_impressions', 'page_engaged_users','page_fans']&period=day&access_token=EAAKGqblVcvkBAAOZBKu4qtLDXJVZCgCP2kOE4HJmbSIYZBMs2BlSY2MihWDsmJ6IferAYm81FiljYZCzj04iZCmKnJJfoxBq55OlASfIAq958fEIYgAOsKARNtQZCsro84UBPSPhDTo7xTsEwFe2AtQdIVEF3fuufqthuz0Aw2gMSaa6w5Ns7Jjh7OBEdTb3ZC99YztBbFkkYTcUSZA2YEbv`,
+        `Paste you fb pageID/insights?metric=['page_impressions', 'page_engaged_users','page_fans']&period=day&access_token=Paste youe access token`,
         "GET",
 
         // page ID
